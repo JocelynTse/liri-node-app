@@ -34,15 +34,15 @@ function runMedia(type) {
 
 //twitter.js
 function tweets() {
-    client.get("statuses/home_timeline", function (error, tweets) {
+    client.get("statuses/home_timeline", function (error, tweets, response) {
         if (error !== null) {
             console.error(error);
         } else {
             for (let i = 0; i <= 19; i++) {
-                let thread = JSON.stringify(tweets).response[i].text;
-                let time = JSON.stringify(tweets).response[i].created_at;
-                console.log(thread);
-                console.log(time);
+                let thread = JSON.stringify(tweets[i]).text;
+                let time = JSON.stringify(tweets[i]).created_at;
+                console.log("Tweet: " + thread);
+                console.log("Created at: " + time);
             }
         }
     })
