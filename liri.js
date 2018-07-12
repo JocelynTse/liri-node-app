@@ -11,8 +11,7 @@ const keys = require("./keys.js");
 var spotify = new Spotify(keys.spotify);
 var client = new Twitter(keys.twitter);
 
-const media = process.argv[2];
-
+let media = process.argv[2];
 let input = process.argv[3];
 
 function runMedia(type) {
@@ -30,47 +29,68 @@ function runMedia(type) {
             text();
             break;
     }
-}
+};
 
+
+//twitter.js
 function tweets() {
-    client.get('statuses/home_timeline', function (error, text, created_at) {
+    client.get("statuses/home_timeline", function (error, tweets) {
         if (error !== null) {
             console.error(error);
         } else {
-            console.log(JSON.stringify(text));
-            //console.log(created_at)
+            for (let i = 0; i <= 19; i++) {
+                let thread = JSON.stringify(tweets).response[i].text;
+                let time = JSON.stringify(tweets).response[i].created_at;
+                console.log(thread);
+                console.log(time);
+            }
         }
     })
-}
+};
 
+
+//spotify.js
 function song() {
-    spotify.search({ type: 'track', query: input }, function (error, data) {
+    spotify.search({ type: "track", query: input }, function (error, data) {
         if (error !== null) {
             console.error(error);
         } else {
-            console.log(data);
-        }
-    });
-}
-
-function movie() {
-    request("http://www.omdbapi.com/?t=" + input + "=&plot=short&apikey=trilogy", function (error, response, body) {
-        if (error !== null) {
-            console.error(error);
-        } else if (input === undefined) {
-            input = ;
-        } else if ()
-
+            console.log("Artist(s): " + JSON.parse(data).tracks.items[0].album.artists[0].name);
+            console.log("Song Name: " + JSON.parse(data).tracks.items[0].name);
+            console.log("Preview Link: " + JSON.parse(data).tracks.items[0].preview_url);
+            console.log("Album: " + JSON.parse(data).tracks.items[0].album.name);
         }
     })
-}
+};
+
+//omdb.js
+function movie() {
+    let queryUrl = "http://www.omdbapi.com/?t=" + input + "=&plot=short&apikey=trilogy"
+    request(queryUrl, function (error, response, body) {
+        if (error !== null) {
+            console.error(error);
+        } else {
+            console.log("Title: " + JSON.parse(body).Title);
+            console.log("Year: " + JSON.parse(body).Year);
+            console.log("IMDB Rating: " + JSON.parse(body).imdbRating);
+            console.log("Rotten Tomatoes Rating: " + JSON.parse(body).Ratings[1].Value);
+            console.log("Country: " + JSON.parse(body).Country);
+            console.log("Language: " + JSON.parse(body).Language);
+            console.log("Plot: " + JSON.parse(body).Plot);
+            console.log("Actors: " + JSON.parse(body).Actors);
+        }
+    })
+};
+
 
 function text() {
     fs.readFile("random.txt", "utf8", function (error, data) {
-        if (error) {
-            console.error(err);
+        if (error !== null) {
+            console.error(error);
+        } else {
+            data = data.split(",");
+            media = data[0];
+            input = data[1];
         }
-
-        
     })
-}
+};
